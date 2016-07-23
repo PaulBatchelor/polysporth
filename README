@@ -14,3 +14,9 @@ polyphony. PolySporth has access to many under-the-hood features of soundplumber
 Sporth's sound engine based on Soundpipe. Coupled with the Scheme language, this
 allows for abstractions not possible with Sporth alone, such as procedural code
 generation, parameterized functions, and reusable code.
+
+This is a work in progress. Future plans include:
+
+- More scheme-based abstractoins 
+- Dynamic loading of scheme plugins.
+- More examples and documentation
