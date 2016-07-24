@@ -24,6 +24,7 @@ static pointer ps_lexer(scheme *sc, pointer args);
 static pointer ps_init_sporthlet(scheme *sc, pointer args);
 static pointer ps_show_pipes(scheme *sc, pointer args);
 static pointer ps_write_code(scheme *sc, pointer args);
+static pointer ps_set_callback(scheme *sc, pointer args);
 
 void ps_scm_load(polysporth *ps, char *filename)
 {
@@ -73,15 +74,17 @@ void ps_scm_load(polysporth *ps, char *filename)
     scheme_define(sc, sc->global_env, 
         mk_symbol(sc, "ps-metanote"), 
         mk_foreign_func(sc, ps_metanote));
+    scheme_define(sc, sc->global_env, 
+        mk_symbol(sc, "ps-set-callback"), 
+        mk_foreign_func(sc, ps_set_callback));
 
-    //s7_define_function(ps->s7, "ps-metanote", ps_metanote, 2, 0, false, "TODO");
-    
     sc->ext_data = (void *)ps;
+
+    ps->cb = sc->NIL;
 
     FILE *fp =fopen(filename,"r");
     scheme_load_file(sc, fp);
     fclose(fp);
-    //s7_load(ps->s7, filename);
 }
 
 static pointer ps_eval(scheme *sc, pointer args)
@@ -287,5 +290,13 @@ static pointer ps_set_release(scheme *sc, pointer args)
     polysporth *ps = sc->ext_data;
     int release = ivalue(car(args));
     ps->reltime = release;
+    return sc->NIL;
+}
+
+static pointer ps_set_callback(scheme *sc, pointer args)
+{
+    polysporth *ps = sc->ext_data;
+    pointer cb = car(args);
+    ps->cb = cb;
     return sc->NIL;
 }

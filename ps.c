@@ -85,7 +85,6 @@ int ps_init(plumber_data *pd, sporth_stack *stack, polysporth *ps, int ninstance
     ps->noteblock = PS_OFF;
 
     /* load scheme */
-    //ps_s7_load(ps, filename);
     ps_scm_load(ps, filename);
     return PLUMBER_OK;
 }
@@ -122,7 +121,7 @@ void ps_compute(polysporth *ps, SPFLOAT tick, SPFLOAT clock)
     int count;
     dvalue *val;
     if(tick != 0) {
-        //s7_call(ps->s7, s7_name_to_value(ps->s7, "run"), s7_nil(ps->s7));
+        if(ps->cb != ps->sc.NIL) scheme_call(&ps->sc, ps->cb, ps->sc.NIL);
     }
 
     if(clock != 0) {

@@ -63,6 +63,9 @@ typedef struct polysporth {
     int noteblock;
     
     sp_ftbl *args;
+
+    /* pointer for callback */
+    pointer cb;
 } polysporth;
 
 int ps_init(plumber_data *pd, sporth_stack *stack, polysporth *ps, int ninstances, char *in_tbl, 
