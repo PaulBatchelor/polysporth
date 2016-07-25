@@ -15,6 +15,18 @@ Sporth's sound engine based on Soundpipe. Coupled with the Scheme language, this
 allows for abstractions not possible with Sporth alone, such as procedural code
 generation, parameterized functions, and reusable code.
 
+
+# Installation
+
+You first will need to have the latest version of 
+[Sporth](https://www.github.com/paulbatchelor/sporth.git) installed. 
+
+From there, the plugin can be compiled by running "make", which will produce
+the file "polysporth.so", which should be dropped into whatever directory 
+you are writing sporth code in.
+
+# Future plans
+
 This is a work in progress. Future plans include:
 
 - More scheme-based abstractoins 
