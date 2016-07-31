@@ -73,6 +73,7 @@ int ps_init(plumber_data *pd, sporth_stack *stack, polysporth *ps, int ninstance
 
     /* initialize event table */
     dvector_init(&ps->events);
+    dvector_init(&ps->tmp);
 
 
     /* set clock to 0 */

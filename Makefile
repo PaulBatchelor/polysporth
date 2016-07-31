@@ -1,6 +1,6 @@
 OBJ = polysporth.o dvector.o ps.o scheme.o f.o 
 
-CFLAGS=-DSTANDALONE=0 -fPIC 
+CFLAGS=-DSTANDALONE=0 -fPIC -g 
 
 # Uncomment to put polysporth in debug mode
 #CFLAGS+=-DDEBUG_POLYSPORTH

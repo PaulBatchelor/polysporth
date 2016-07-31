@@ -25,6 +25,7 @@ static pointer ps_init_sporthlet(scheme *sc, pointer args);
 static pointer ps_show_pipes(scheme *sc, pointer args);
 static pointer ps_write_code(scheme *sc, pointer args);
 static pointer ps_set_callback(scheme *sc, pointer args);
+static pointer ps_rand(scheme *sc, pointer args);
 
 void ps_scm_load(polysporth *ps, char *filename)
 {
@@ -77,6 +78,10 @@ void ps_scm_load(polysporth *ps, char *filename)
     scheme_define(sc, sc->global_env, 
         mk_symbol(sc, "ps-set-callback"), 
         mk_foreign_func(sc, ps_set_callback));
+    scheme_define(sc, sc->global_env, 
+        mk_symbol(sc, "ps-rand"), 
+        mk_foreign_func(sc, ps_rand));
+
 
     sc->ext_data = (void *)ps;
 
@@ -299,4 +304,10 @@ static pointer ps_set_callback(scheme *sc, pointer args)
     pointer cb = car(args);
     ps->cb = cb;
     return sc->NIL;
+}
+
+static pointer ps_rand(scheme *sc, pointer args)
+{
+    polysporth *ps = sc->ext_data;
+    return mk_real(sc, sp_rand(ps->pd.sp));
 }
