@@ -28,6 +28,8 @@ static pointer ps_ftbl(scheme *sc, pointer args);
 static pointer ps_tset(scheme *sc, pointer args);
 static pointer ps_tget(scheme *sc, pointer args);
 static pointer ps_mkvar(scheme *sc, pointer args);
+static pointer ps_varset(scheme *sc, pointer args);
+static pointer ps_varget(scheme *sc, pointer args);
 
 void ps_scm_load(polysporth *ps, char *filename)
 {
@@ -92,6 +94,15 @@ void ps_scm_load(polysporth *ps, char *filename)
     scheme_define(sc, sc->global_env, 
         mk_symbol(sc, "ps-tget"), 
         mk_foreign_func(sc, ps_tget));
+    scheme_define(sc, sc->global_env, 
+        mk_symbol(sc, "ps-mkvar"), 
+        mk_foreign_func(sc, ps_mkvar));
+    scheme_define(sc, sc->global_env, 
+        mk_symbol(sc, "ps-varset"), 
+        mk_foreign_func(sc, ps_varset));
+    scheme_define(sc, sc->global_env, 
+        mk_symbol(sc, "ps-varget"), 
+        mk_foreign_func(sc, ps_varget));
 
 
     sc->ext_data = (void *)ps;
@@ -381,8 +392,30 @@ static pointer ps_mkvar(scheme *sc, pointer args)
 
     const char *name = string_value(car(args));
     args = cdr(args);
-    SPFLOAT val = rvalue(args);
-    plumber_make_variable(pd, name, &ptr);
+    SPFLOAT val = rvalue(car(args));
+    plumber_create_var(pd, name, &ptr);
     *ptr = val;
     return mk_cptr(sc, (void **)&ptr);
+}
+
+static pointer ps_varset(scheme *sc, pointer args)
+{
+    polysporth *ps = sc->ext_data;
+    plumber_data *pd = &ps->pd;
+    SPFLOAT *ptr;
+
+    ptr = (SPFLOAT *)string_value(car(args));
+    args = cdr(args);
+    SPFLOAT val = rvalue(car(args));
+    *ptr = val;
+    return sc->NIL;
+}
+
+static pointer ps_varget(scheme *sc, pointer args)
+{
+    polysporth *ps = sc->ext_data;
+    plumber_data *pd = &ps->pd;
+    SPFLOAT *ptr;
+    ptr = (SPFLOAT *)string_value(car(args));
+    return mk_real(sc, *ptr);
 }
