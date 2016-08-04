@@ -27,6 +27,7 @@ static pointer ps_rand(scheme *sc, pointer args);
 static pointer ps_ftbl(scheme *sc, pointer args);
 static pointer ps_tset(scheme *sc, pointer args);
 static pointer ps_tget(scheme *sc, pointer args);
+static pointer ps_mkvar(scheme *sc, pointer args);
 
 void ps_scm_load(polysporth *ps, char *filename)
 {
@@ -370,4 +371,18 @@ static pointer ps_tget(scheme *sc, pointer args)
     args = cdr(args);
     val = ft->tbl[index];
     return mk_real(sc, val);
+}
+
+static pointer ps_mkvar(scheme *sc, pointer args)
+{
+    polysporth *ps = sc->ext_data;
+    plumber_data *pd = &ps->pd;
+    SPFLOAT *ptr;
+
+    const char *name = string_value(car(args));
+    args = cdr(args);
+    SPFLOAT val = rvalue(args);
+    plumber_make_variable(pd, name, &ptr);
+    *ptr = val;
+    return mk_cptr(sc, (void **)&ptr);
 }
