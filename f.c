@@ -18,14 +18,15 @@ static pointer ps_note(scheme *sc, pointer args);
 static pointer ps_noteblock_end(scheme *sc, pointer args);
 static pointer ps_metanote(scheme *sc, pointer args);
 static pointer ps_set_release(scheme *sc, pointer args);
-static pointer ps_tset(scheme *sc, pointer args);
-static pointer ps_tget(scheme *sc, pointer args);
 static pointer ps_lexer(scheme *sc, pointer args);
 static pointer ps_init_sporthlet(scheme *sc, pointer args);
 static pointer ps_show_pipes(scheme *sc, pointer args);
 static pointer ps_write_code(scheme *sc, pointer args);
 static pointer ps_set_callback(scheme *sc, pointer args);
 static pointer ps_rand(scheme *sc, pointer args);
+static pointer ps_ftbl(scheme *sc, pointer args);
+static pointer ps_tset(scheme *sc, pointer args);
+static pointer ps_tget(scheme *sc, pointer args);
 
 void ps_scm_load(polysporth *ps, char *filename)
 {
@@ -81,6 +82,15 @@ void ps_scm_load(polysporth *ps, char *filename)
     scheme_define(sc, sc->global_env, 
         mk_symbol(sc, "ps-rand"), 
         mk_foreign_func(sc, ps_rand));
+    scheme_define(sc, sc->global_env, 
+        mk_symbol(sc, "ps-ftbl"), 
+        mk_foreign_func(sc, ps_ftbl));
+    scheme_define(sc, sc->global_env, 
+        mk_symbol(sc, "ps-tset"), 
+        mk_foreign_func(sc, ps_tset));
+    scheme_define(sc, sc->global_env, 
+        mk_symbol(sc, "ps-tget"), 
+        mk_foreign_func(sc, ps_tget));
 
 
     sc->ext_data = (void *)ps;
@@ -310,4 +320,54 @@ static pointer ps_rand(scheme *sc, pointer args)
 {
     polysporth *ps = sc->ext_data;
     return mk_real(sc, sp_rand(ps->pd.sp));
+}
+
+static pointer ps_ftbl(scheme *sc, pointer args)
+{
+    polysporth *ps = sc->ext_data;
+    plumber_data *pd = &ps->pd;
+    pointer out;
+    sp_ftbl *ft;
+
+    const char *str = string_value(car(args));
+    if(plumber_ftmap_search(pd, str, &ft) != PLUMBER_OK) {
+        fprintf(stderr, "Could not find ftable %s\n", str);
+        pd->sporth.stack.error++;
+    }
+
+    out = mk_cptr(sc, (void **)&ft);
+    return out;
+}
+
+static pointer ps_tset(scheme *sc, pointer args)
+{
+    polysporth *ps = sc->ext_data;
+    plumber_data *pd = &ps->pd;
+    sp_ftbl *ft;
+    int index;
+    SPFLOAT val;
+
+    ft = (sp_ftbl *)string_value(car(args));
+    args = cdr(args);
+    index = ivalue(car(args));
+    args = cdr(args);
+    val = rvalue(car(args));
+    ft->tbl[index] = val;
+    return sc->NIL;
+}
+
+static pointer ps_tget(scheme *sc, pointer args)
+{
+    polysporth *ps = sc->ext_data;
+    plumber_data *pd = &ps->pd;
+    sp_ftbl *ft;
+    int index;
+    SPFLOAT val;
+
+    ft = (sp_ftbl *)string_value(car(args));
+    args = cdr(args);
+    index = ivalue(car(args));
+    args = cdr(args);
+    val = ft->tbl[index];
+    return mk_real(sc, val);
 }

@@ -123,7 +123,8 @@ enum scheme_types {
   T_MACRO=12,
   T_PROMISE=13,
   T_ENVIRONMENT=14,
-  T_LAST_SYSTEM_TYPE=14
+  T_CPTR = 15,
+  T_LAST_SYSTEM_TYPE=15
 };
 
 /* ADJ is enough slack to align cells in a TYPE_BITS-bit boundary */
@@ -202,6 +203,8 @@ INTERFACE  long charvalue(pointer p)  { return ivalue_unchecked(p); }
 INTERFACE INLINE int is_port(pointer p)     { return (type(p)==T_PORT); }
 INTERFACE INLINE int is_inport(pointer p)  { return is_port(p) && p->_object._port->kind & port_input; }
 INTERFACE INLINE int is_outport(pointer p) { return is_port(p) && p->_object._port->kind & port_output; }
+
+INTERFACE INLINE int is_cptr(pointer p) { return (type(p) == T_CPTR); }
 
 INTERFACE INLINE int is_pair(pointer p)     { return (type(p)==T_PAIR); }
 #define car(p)           ((p)->_object._cons._car)
@@ -962,6 +965,16 @@ static pointer mk_number(scheme *sc, num n) {
  } else {
      return mk_real(sc,n.value.rvalue);
  }
+}
+
+INTERFACE pointer mk_cptr(scheme *sc, void **ud)
+{
+    char *ptr = *ud;
+    pointer x;
+    x = get_cell(sc, sc->NIL, sc->NIL);
+    typeflag(x) = T_CPTR | T_ATOM;
+    strvalue(x) = ptr;
+    return x;
 }
 
 /* allocate name to string area */
