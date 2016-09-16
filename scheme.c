@@ -124,7 +124,7 @@ enum scheme_types {
   T_PROMISE=13,
   T_ENVIRONMENT=14,
   T_CPTR = 15,
-  T_LAST_SYSTEM_TYPE=15
+  T_LAST_SYSTEM_TYPE=16
 };
 
 /* ADJ is enough slack to align cells in a TYPE_BITS-bit boundary */
@@ -1213,6 +1213,7 @@ static pointer mk_sharp_const(scheme *sc, char *name) {
 static void mark(pointer a) {
      pointer t, q, p;
 
+     if(a == NULL) { printf("this shouldn't be happening\n"); return; }
      t = (pointer) 0;
      p = a;
 E2:  setmark(p);

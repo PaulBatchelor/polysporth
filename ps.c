@@ -123,6 +123,7 @@ void ps_compute(polysporth *ps, SPFLOAT tick, SPFLOAT clock)
     dvalue *val;
     if(tick != 0) {
         if(ps->cb != ps->sc.NIL) scheme_call(&ps->sc, ps->cb, ps->sc.NIL);
+        //scheme_load_string(&ps->sc, "(run)");
     }
 
     if(clock != 0) {

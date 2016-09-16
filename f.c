@@ -331,7 +331,7 @@ static pointer ps_set_callback(scheme *sc, pointer args)
 static pointer ps_rand(scheme *sc, pointer args)
 {
     polysporth *ps = sc->ext_data;
-    return mk_real(sc, sp_rand(ps->pd.sp));
+    return mk_integer(sc, (long)sp_rand(ps->pd.sp));
 }
 
 static pointer ps_ftbl(scheme *sc, pointer args)
